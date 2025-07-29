@@ -6,6 +6,8 @@ import os
 from torch.autograd import Variable
 from .base_model import BaseModel
 from . import networks
+from .arcface_models import ResNet
+from torch.serialization import add_safe_globals
 
 class SpecificNorm(nn.Module):
     def __init__(self, epsilon=1e-8):
@@ -61,6 +63,7 @@ class fsModel(BaseModel):
 
         # Id network
         netArc_checkpoint = opt.Arc_path
+        add_safe_globals([ResNet])
         netArc_checkpoint = torch.load(netArc_checkpoint, map_location=torch.device("cpu"))
         self.netArc = netArc_checkpoint
         self.netArc = self.netArc.to(device)
