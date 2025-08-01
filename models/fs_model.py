@@ -7,10 +7,8 @@ from torch.autograd import Variable
 from .base_model import BaseModel
 from . import networks
 from models.arcface_models import ResNet
-from torch.nn import Conv2d, BatchNorm2d, ReLU, Sequential, AdaptiveAvgPool2d, Linear
-from torch.nn import PReLU
-from torch.nn import MaxPool2d
-from torch.serialization import add_safe_globals
+from torch.nn import Conv2d, BatchNorm2d, ReLU, Sequential, AdaptiveAvgPool2d, Linear ,PReLU ,MaxPool2d
+
 
 class SpecificNorm(nn.Module):
     def __init__(self, epsilon=1e-8):
@@ -48,7 +46,6 @@ class fsModel(BaseModel):
         return loss_filter
 
     def initialize(self, opt):
-        add_safe_globals({ResNet,Conv2d,BatchNorm2d, ReLU,Sequential, AdaptiveAvgPool2d, Linear,PReLU,MaxPool2d})
         BaseModel.initialize(self, opt)
         if opt.resize_or_crop != 'none' or not opt.isTrain:  # when training at full res this causes OOM
             torch.backends.cudnn.benchmark = True
@@ -66,6 +63,10 @@ class fsModel(BaseModel):
         self.netG.to(device)
 
         # Id network
+
+        
+        torch.serialization.add_safe_globals({ResNet,Conv2d,BatchNorm2d, ReLU,Sequential, AdaptiveAvgPool2d, Linear,PReLU,MaxPool2d})
+        
         netArc_checkpoint = opt.Arc_path
         netArc_checkpoint = torch.load(netArc_checkpoint, map_location=torch.device("cpu"),weights_only = True)
         self.netArc = netArc_checkpoint
