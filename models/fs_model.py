@@ -48,7 +48,7 @@ class fsModel(BaseModel):
         return loss_filter
 
     def initialize(self, opt):
-        add_safe_globals({ResNet,Conv2d,BatchNorm2d, ReLU,Sequential, AdaptiveAvgPool2d, Linear,PReLU,MaxPool2d,})
+        add_safe_globals({ResNet,Conv2d,BatchNorm2d, ReLU,Sequential, AdaptiveAvgPool2d, Linear,PReLU,MaxPool2d})
         BaseModel.initialize(self, opt)
         if opt.resize_or_crop != 'none' or not opt.isTrain:  # when training at full res this causes OOM
             torch.backends.cudnn.benchmark = True
@@ -67,8 +67,7 @@ class fsModel(BaseModel):
 
         # Id network
         netArc_checkpoint = opt.Arc_path
-        add_safe_globals([ResNet])
-        netArc_checkpoint = torch.load(netArc_checkpoint, map_location=torch.device("cpu"))
+        netArc_checkpoint = torch.load(netArc_checkpoint, map_location=torch.device("cpu"),weights_only = True)
         self.netArc = netArc_checkpoint
         self.netArc = self.netArc.to(device)
         self.netArc.eval()
