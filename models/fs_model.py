@@ -6,7 +6,10 @@ import os
 from torch.autograd import Variable
 from .base_model import BaseModel
 from . import networks
-from .arcface_models import ResNet
+from models.arcface_models import ResNet
+from torch.nn import Conv2d, BatchNorm2d, ReLU, Sequential, AdaptiveAvgPool2d, Linear
+from torch.nn import PReLU
+from torch.nn import MaxPool2d
 from torch.serialization import add_safe_globals
 
 class SpecificNorm(nn.Module):
@@ -45,6 +48,7 @@ class fsModel(BaseModel):
         return loss_filter
 
     def initialize(self, opt):
+        add_safe_globals({ResNet,Conv2d,BatchNorm2d, ReLU,Sequential, AdaptiveAvgPool2d, Linear,PReLU,MaxPool2d,})
         BaseModel.initialize(self, opt)
         if opt.resize_or_crop != 'none' or not opt.isTrain:  # when training at full res this causes OOM
             torch.backends.cudnn.benchmark = True
